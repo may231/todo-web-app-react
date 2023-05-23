@@ -48,6 +48,36 @@ const fetchCategories = createAsyncThunk(
   }
 );
 
+const createCategory = createAsyncThunk('createCategory', async(category)=>{
+  try{
+    const {data} = await axios.post('/api/categories', category);
+    return data;
+  } catch(er){
+    console.log(er);
+  }
+  
+});
+
+const updateCategory = createAsyncThunk('updateCategory', async(category)=>{
+  try{
+    const {data} = await axios.put(`/api/categories/${category.id}`, category);
+    return data;
+  } catch(er){
+    console.log(er);
+  }
+  
+});
+
+const deleteCategory = createAsyncThunk('deleteCategory', async(category)=>{
+  try{
+    await axios.delete(`/api/categories/${category.id}`);
+    return category;
+  } catch(er){
+    console.log(er);
+  }
+  
+});
+
 
 const todosSlice = createSlice({
   name: 'todos',
@@ -68,6 +98,7 @@ const todosSlice = createSlice({
     builder.addCase(destroyTodo.fulfilled, (state, action)=> {
       return state.filter(todo => todo.id !== action.payload.id);
     })
+    
   }
 });
 
@@ -79,6 +110,15 @@ const categoriesSlice = createSlice({
   extraReducers: (builder)=> {
     builder.addCase(fetchCategories.fulfilled, (state, action)=> {
       return action.payload;
+    })
+    builder.addCase(createCategory.fulfilled, (state, action)=>{
+      return [...state, action.payload];
+    })
+    builder.addCase(updateCategory.fulfilled, (state, action)=>{
+      return state.map( category => category.id === action.payload.id ? action.payload: category);
+    })
+    builder.addCase(deleteCategory.fulfilled, (state, action)=>{
+      return state.filter(category => category.id !== action.payload.id);
     })
   }
 });
@@ -92,4 +132,4 @@ const store = configureStore({
 
 export default store;
 
-export { destroyTodo, createTodo, updateTodo, fetchTodos, fetchCategories };
+export { destroyTodo, deleteCategory, updateCategory, createTodo, updateTodo, createCategory, fetchTodos, fetchCategories };

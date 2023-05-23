@@ -58,6 +58,39 @@ app.get('/api/categories', async(req, res, next)=> {
   }
 });
 
+app.post('/api/categories', async(req, res, next)=> {
+  try {
+    console.log('value of req.body in server is: '+req.body)
+    const category = await Category.create(req.body);
+    res.send(category);
+  }
+  catch(ex){
+    next(ex);
+  }
+});
+
+app.put('/api/categories/:id', async(req, res, next)=> {
+  try {
+    const category = await Category.findByPk(req.body.id);
+    category.update(req.body);
+    res.send(category);
+  }
+  catch(ex){
+    next(ex);
+  }
+});
+
+app.delete('/api/categories/:id', async(req, res, next)=> {
+  try {
+    const category = await Category.findByPk(req.params.id);
+    await category.destroy();
+    res.sendStatus(204);
+  }
+  catch(ex){
+    next(ex);
+  }
+});
+
 
 
 
